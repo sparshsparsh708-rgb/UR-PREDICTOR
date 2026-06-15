@@ -12,5 +12,58 @@
     <button onclick="alert('Prediction feature coming soon!')">
         Predict Match
     </button>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UR PREDICTOR</title>
+</head>
+
+<body style="background:black;color:white;text-align:center;font-family:Arial;">
+
+    <h1>⚽ UR PREDICTOR</h1>
+    <h3>Predict upcoming matches (Fun simulator)</h3>
+
+    <hr>
+
+    <h2>📅 Upcoming Matches</h2>
+
+    <div id="matches"></div>
+
+    <script>
+        // Dummy upcoming matches
+        const matches = [
+            "Real Madrid vs Barcelona",
+            "Manchester United vs Liverpool",
+            "PSG vs Bayern Munich",
+            "Arsenal vs Chelsea"
+        ];
+
+        const container = document.getElementById("matches");
+
+        function predict() {
+            const results = ["Win 🟢", "Draw 🟡", "Lose 🔴"];
+            return results[Math.floor(Math.random() * results.length)];
+        }
+
+        matches.forEach(match => {
+            const div = document.createElement("div");
+            div.style.margin = "15px";
+            div.style.padding = "10px";
+            div.style.border = "1px solid white";
+
+            div.innerHTML = `
+                <h3>${match}</h3>
+                <p id="${match}">Prediction: ❓</p>
+                <button onclick="
+                    document.getElementById('${match}').innerText = 'Prediction: ' + predict();
+                ">
+                    Predict
+                </button>
+            `;
+
+            container.appendChild(div);
+        });
+    </script>
+
 </body>
 </html>
