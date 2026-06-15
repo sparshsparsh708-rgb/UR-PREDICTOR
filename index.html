@@ -3,66 +3,75 @@
 <head>
     <title>UR PREDICTOR</title>
 </head>
-<body style="background:black;color:white;text-align:center;font-family:Arial;">
-    <h1>⚽ UR PREDICTOR</h1>
-    <h2>Predict. Earn. Build. Win.</h2>
 
-    <p>Welcome to UR PREDICTOR!</p>
-
-    <button onclick="alert('Prediction feature coming soon!')">
-        Predict Match
-    </button>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>UR PREDICTOR</title>
-</head>
-
-<body style="background:black;color:white;text-align:center;font-family:Arial;">
+<body style="background:black;color:white;font-family:Arial;text-align:center;">
 
     <h1>⚽ UR PREDICTOR</h1>
-    <h3>Predict upcoming matches (Fun simulator)</h3>
+    <p>Live football matches (auto updated)</p>
+
+    <button onclick="loadMatches()">Load Today’s Matches</button>
 
     <hr>
 
-    <h2>📅 Upcoming Matches</h2>
-
-    <div id="matches"></div>
+    <div id="matches">Click button to load matches</div>
 
     <script>
-        // Dummy upcoming matches
-        const matches = [
-            "Real Madrid vs Barcelona",
-            "Manchester United vs Liverpool",
-            "PSG vs Bayern Munich",
-            "Arsenal vs Chelsea"
-        ];
+        async function loadMatches() {
+            const container = document.getElementById("matches");
+            container.innerHTML = "Loading matches...";
 
-        const container = document.getElementById("matches");
+            try {
+                const date = new Date().toISOString().split('T')[0];
 
-        function predict() {
-            const results = ["Win 🟢", "Draw 🟡", "Lose 🔴"];
-            return results[Math.floor(Math.random() * results.length)];
+                const response = await fetch(
+                    "https://v3.football.api-sports.io/fixtures?date=" + date,
+                    {
+                        method: "GET",
+                        headers: {
+                            "x-apisports-key": "ed36ec18384c125fc5e516e1a993f28b"
+                        }
+                    }
+                );
+
+                const data = await response.json();
+
+                container.innerHTML = "";
+
+                if (!data.response || data.response.length === 0) {
+                    container.innerHTML = "No matches today.";
+                    return;
+                }
+
+                data.response.forEach(match => {
+                    const home = match.teams.home.name;
+                    const away = match.teams.away.name;
+
+                    const div = document.createElement("div");
+
+                    div.style = `
+                        margin:10px auto;
+                        padding:15px;
+                        width:80%;
+                        border:1px solid white;
+                        border-radius:10px;
+                        background:#1a1a1a;
+                    `;
+
+                    div.innerHTML = `
+                        <h3>${home} vs ${away}</h3>
+                        <button onclick="alert('Prediction feature coming soon!')">
+                            Predict Match
+                        </button>
+                    `;
+
+                    container.appendChild(div);
+                });
+
+            } catch (error) {
+                console.log(error);
+                container.innerHTML = "Error loading matches. Check API key or limit.";
+            }
         }
-
-        matches.forEach(match => {
-            const div = document.createElement("div");
-            div.style.margin = "15px";
-            div.style.padding = "10px";
-            div.style.border = "1px solid white";
-
-            div.innerHTML = `
-                <h3>${match}</h3>
-                <p id="${match}">Prediction: ❓</p>
-                <button onclick="
-                    document.getElementById('${match}').innerText = 'Prediction: ' + predict();
-                ">
-                    Predict
-                </button>
-            `;
-
-            container.appendChild(div);
-        });
     </script>
 
 </body>
