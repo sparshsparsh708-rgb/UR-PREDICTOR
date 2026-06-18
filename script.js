@@ -1,54 +1,26 @@
-let points = 500;
-let team = [];
+async function loadMatches() {
 
-function updatePoints(){
-  document.getElementById("points").innerText =
-    "Points: " + points;
-}
+    const container = document.getElementById("matches");
 
-function submitPrediction(){
+    try {
 
-  const home =
-    document.getElementById("homeGoals").value;
+        const response = await fetch(
+            "https://v3.football.api-sports.io/status",
+            {
+                headers: {
+                    "x-apisports-key": API_KEY
+                }
+            }
+        );
 
-  const away =
-    document.getElementById("awayGoals").value;
+        const data = await response.json();
 
-  if(home == 2 && away == 1){
-    points += 50;
-    alert("Exact score! +50");
-  }
-  else if(home > away){
-    points += 25;
-    alert("Correct winner! +25");
-  }
-  else{
-    alert("Wrong prediction");
-  }
+        container.innerHTML =
+            "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
 
-  updatePoints();
-}
+    } catch (err) {
 
-function buyPlayer(name,price){
-
-  if(points >= price){
-
-    points -= price;
-
-    team.push(name);
-
-    const li =
-      document.createElement("li");
-
-    li.innerText = name;
-
-    document
-      .getElementById("team")
-      .appendChild(li);
-
-    updatePoints();
-  }
-  else{
-    alert("Not enough points");
-  }
+        container.innerHTML =
+            "ERROR: " + err.message;
+    }
 }
